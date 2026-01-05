@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KaligrafiMaster - Training Kaligrafi untuk Siswa Berbakat</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Google untuk nuansa kaligrafi -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+	<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .font-caligraphy {
+            font-family: 'Playfair Display', serif;
+        }
+        .carousel-container {
+            scroll-behavior: smooth;
+        }
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+        .login-modal, .admin-panel {
+            display: none;
+        }
+        .gradient-primary {
+            background: linear-gradient(135deg, #8B5A2B 0%, #D4A76A 100%);
+        }
+        .gradient-secondary {
+            background: linear-gradient(135deg, #f0f9ff 0%, #ede9fe 100%);
+        }
+        .preview-item {
+            width: 64px;
+            height: 64px;
+            border-radius: 6px;
+            border: 2px solid #818cf8;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Login Modal -->
+    <div id="loginModal" class="login-modal fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" style="display: none;">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Admin Login</h2>
+                <button onclick="closeLoginModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 mb-2">Username</label>
+                    <input type="text" id="username" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" placeholder="Masukkan username" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-2">Password</label>
+                    <input type="password" id="password" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" placeholder="Masukkan password" required>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="remember" class="h-4 w-4 text-amber-600 rounded">
+                        <label for="remember" class="ml-2 text-gray-700">Ingat saya</label>
+                    </div>
+                    <button type="button" class="text-amber-700 hover:text-amber-800 text-sm font-medium">Lupa password?</button>
+                </div>
+                <button type="submit" class="w-full gradient-primary text-white font-semibold py-3 rounded-lg hover:opacity-90 transition duration-300">Masuk</button>
+            </form>
+            <div class="mt-4 text-center text-sm text-gray-600">
+                <p>Gunakan username: <span class="font-bold">admin</span> dan password: <span class="font-bold">admin123</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Landing Page -->
+    <div id="landingPage">
+        <!-- Header -->
+        <header class="sticky top-0 z-40 bg-white shadow-sm">
+            <div class="container mx-auto px-4 py-3">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-br from-amber-700 to-amber-900 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-pen-nib text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-800">Kaligrafi<span class="text-amber-700">Master</span></h1>
+                            <p class="text-xs text-gray-500">Seni Menulis Indah</p>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="gradient-primary text-white">
+            <div class="container mx-auto px-4 py-12 md:py-16">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/2 mb-10 md:mb-0">
+                        <h2 class="text-4xl md:text-5xl font-bold mb-4 font-caligraphy">Training Kaligrafi untuk Siswa Berbakat</h2>
+                        <p class="text-lg mb-8 opacity-90">Temukan dan kembangkan bakat kaligrafi dalam diri Anda bersama mentor berpengalaman. Program eksklusif untuk siswa dengan potensi luar biasa.</p>
+                        <div class="flex flex-wrap gap-4">
+                            <a href="#program" class="bg-white text-amber-800 px-6 py-3 rounded-lg font-bold hover:bg-gray-100 transition duration-300 shadow-lg">
+                                <i class="fas fa-book-open mr-2"></i>Lihat Program
+                            </a>
+                            <a href="#gallery" class="bg-transparent border-2 border-white text-white px-6 py-3 rounded-lg font-bold hover:bg-white hover:text-amber-800 transition duration-300">
+                                <i class="fas fa-images mr-2"></i>Galeri Karya
+                            </a>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 flex justify-center">
+                        <div class="relative">
+                            <div class="w-64 h-64 md:w-80 md:h-80 bg-gradient-to-br from-amber-200 to-amber-400 rounded-full flex items-center justify-center shadow-2xl">
+                                <i class="fas fa-pen-nib text-amber-800 text-8xl md:text-9xl"></i>
+                            </div>
+                            <div class="absolute -top-2 -right-2 w-20 h-20 bg-white text-amber-800 rounded-full flex flex-col items-center justify-center shadow-lg">
+                                <span class="text-2xl font-bold">50+</span>
+                                <span class="text-xs">Siswa</span>
+                            </div>
+                            <div class="absolute -bottom-4 -left-4 w-24 h-24 bg-amber-800 text-white rounded-full flex flex-col items-center justify-center shadow-lg">
+                                <span class="text-2xl font-bold">12</span>
+                                <span class="text-xs">Mentor</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Carousel Materi Kaligrafi -->
+        <section class="py-12 bg-gradient-secondary">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-3">Materi Kaligrafi</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">Pelajari teknik-teknik dasar hingga lanjutan dalam seni kaligrafi dengan materi yang disusun khusus untuk siswa berbakat.</p>
+                </div>
+                
+                <div class="relative">
+                    <div id="carousel" class="carousel-container flex overflow-x-auto pb-6 space-x-6 px-2" style="scroll-behavior: smooth;">
+                        <!-- Card 1 -->
+                        <div class="flex-shrink-0 w-72 bg-white rounded-2xl shadow-lg overflow-hidden">
+                            <div class="h-40 bg-gradient-to-r from-amber-500 to-amber-700 flex items-center justify-center">
+                                <i class="fas fa-pen-alt text-white text-5xl"></i>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h3 class="text-xl font-bold text-gray-800">Dasar-dasar Kaligrafi</h3>
+                                    <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">Pemula</span>
+                                </div>
+                                <p class="text-gray-600 mb-4">Pelajari teknik dasar memegang pena, tekanan yang tepat, dan membentuk huruf-huruf sederhana.</p>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="far fa-clock mr-2"></i>
+                                    <span>8 Modul • 12 Jam</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Card 2 -->
+                        <div class="flex-shrink-0 w-72 bg-white rounded-2xl shadow-lg overflow-hidden">
+                            <div class="h-40 bg-gradient-to-r from-amber-600 to-amber-800 flex items-center justify-center">
+                                <i class="fas fa-paint-brush text-white text-5xl"></i>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h3 class="text-xl font-bold text-gray-800">Kaligrafi Khat Naskhi</h3>
+                                    <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">Menengah</span>
+                                </div>
+                                <p class="text-gray-600 mb-4">Menguasai gaya Khat Naskhi, salah satu gaya kaligrafi Arab yang paling umum digunakan.</p>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="far fa-clock mr-2"></i>
+                                    <span>10 Modul • 16 Jam</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Card 3 -->
+                        <div class="flex-shrink-0 w-72 bg-white rounded-2xl shadow-lg overflow-hidden">
+                            <div class="h-40 bg-gradient-to-r from-amber-700 to-amber-900 flex items-center justify-center">
+                                <i class="fas fa-feather-alt text-white text-5xl"></i>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h3 class="text-xl font-bold text-gray-800">Kaligrafi Khat Diwani</h3>
+                                    <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">Lanjutan</span>
+                                </div>
+                                <p class="text-gray-600 mb-4">Belajar gaya Khat Diwani yang terkenal dengan keindahan dan kerumitan bentuk hurufnya.</p>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="far fa-clock mr-2"></i>
+                                    <span>12 Modul • 20 Jam</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Card 4 -->
+                        <div class="flex-shrink-0 w-72 bg-white rounded-2xl shadow-lg overflow-hidden">
+                            <div class="h-40 bg-gradient-to-r from-yellow-600 to-amber-800 flex items-center justify-center">
+                                <i class="fas fa-brush text-white text-5xl"></i>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h3 class="text-xl font-bold text-gray-800">Kaligrafi Modern</h3>
+                                    <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">Kreatif</span>
+                                </div>
+                                <p class="text-gray-600 mb-4">Eksplorasi kaligrafi dengan gaya modern dan kontemporer untuk karya yang lebih personal.</p>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="far fa-clock mr-2"></i>
+                                    <span>6 Modul • 10 Jam</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Card 5 -->
+                        <div class="flex-shrink-0 w-72 bg-white rounded-2xl shadow-lg overflow-hidden">
+                            <div class="h-40 bg-gradient-to-r from-amber-800 to-amber-950 flex items-center justify-center">
+                                <i class="fas fa-spray-can text-white text-5xl"></i>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h3 class="text-xl font-bold text-gray-800">Kaligrafi di Media Khusus</h3>
+                                    <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">Eksperimen</span>
+                                </div>
+                                <p class="text-gray-600 mb-4">Mengaplikasikan kaligrafi pada berbagai media seperti kayu, kaca, kanvas, dan material lainnya.</p>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="far fa-clock mr-2"></i>
+                                    <span>8 Modul • 14 Jam</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-center mt-8 space-x-4">
+                        <button onclick="scrollCarousel(-1)" class="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center text-amber-700 hover:bg-amber-50">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button onclick="scrollCarousel(1)" class="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center text-amber-700 hover:bg-amber-50">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Program Section -->
+        <section id="program" class="py-12 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-3">Program Training Eksklusif</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">Program kami dirancang khusus untuk mengidentifikasi dan mengembangkan bakat kaligrafi siswa dengan potensi luar biasa.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-6 shadow-lg">
+                        <div class="w-16 h-16 gradient-primary rounded-xl flex items-center justify-center mb-6">
+                            <i class="fas fa-search text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Seleksi Bakat</h3>
+                        <p class="text-gray-600 mb-6">Proses seleksi ketat untuk mengidentifikasi siswa dengan bakat dan minat khusus dalam seni kaligrafi.</p>
+                        <ul class="space-y-3">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-amber-600 mr-3"></i>
+                                <span>Test bakat dan minat</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-amber-600 mr-3"></i>
+                                <span>Portofolio karya awal</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-amber-600 mr-3"></i>
+                                <span>Wawancara dengan mentor</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-6 shadow-lg">
+                        <div class="w-16 h-16 gradient-primary rounded-xl flex items-center justify-center mb-6">
+                            <i class="fas fa-user-graduate text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Pelatihan Intensif</h3>
+                        <p class="text-gray-600 mb-6">Program pelatihan intensif dengan rasio siswa-mentor yang rendah untuk perhatian maksimal.</p>
+                        <ul class="space-y-3">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-amber-600 mr-3"></i>
+                                <span>Kelas kecil (max 8 siswa)</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-amber-600 mr-3"></i>
+                                <span>Sesi latihan harian</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-amber-600 mr-3"></i>
+                                <span>Pendekatan personal</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-6 shadow-lg">
+                        <div class="w-16 h-16 gradient-primary rounded-xl flex items-center justify-center mb-6">
+                            <i class="fas fa-trophy text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Pengembangan Karir</h3>
+                        <p class="text-gray-600 mb-6">Bimbingan untuk mengembangkan karir di bidang kaligrafi, dari pameran hingga komisi profesional.</p>
+                        <ul class="space-y-3">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-amber-600 mr-3"></i>
+                                <span>Pameran karya tahunan</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-amber-600 mr-3"></i>
+                                <span>Jaringan profesional</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-amber-600 mr-3"></i>
+                                <span>Dukungan portofolio</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section id="gallery" class="py-12 bg-gradient-secondary">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-3">Galeri Karya Siswa</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">Lihat hasil karya siswa berbakat yang telah mengikuti program training kaligrafi kami.</p>
+                </div>
+                
+                <!-- Filter dan Info -->
+                <div class="flex flex-wrap justify-between items-center mb-8">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Karya Terbaru</h3>
+                        <p class="text-gray-600">Total <span id="totalArtworks" class="font-bold text-amber-700">2</span> karya</p>
+                    </div>
+                    <div class="flex space-x-2 mt-4 md:mt-0">
+                        <button onclick="filterGallery('all')" id="filterAll" class="px-4 py-2 bg-amber-600 text-white rounded-lg font-medium">Semua</button>
+                        <button onclick="filterGallery('popular')" id="filterPopular" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300">Populer</button>
+                        <button onclick="filterGallery('recent')" id="filterRecent" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300">Terbaru</button>
+                    </div>
+                </div>
+                
+                <!-- Gallery Grid -->
+                <div id="galleryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Karya akan dimuat dari localStorage -->
+                </div>
+                
+                <!-- Empty State -->
+                <div id="emptyGallery" class="text-center py-12 hidden">
+                    <div class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-image text-gray-400 text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-700 mb-2">Belum Ada Karya</h3>
+                    <p class="text-gray-600 max-w-md mx-auto">Admin belum mengupload karya siswa. Silakan login sebagai admin untuk menambahkan karya pertama.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-white py-12">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-8 md:mb-0">
+                        <div class="flex items-center mb-4">
+                            <div class="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-700 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-pen-nib text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold">Kaligrafi<span class="text-amber-400">Master</span></h2>
+                                <p class="text-gray-400 text-sm">Training Kaligrafi untuk Siswa Berbakat</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 max-w-md">Mengembangkan bakat kaligrafi siswa berbakat melalui program pelatihan intensif dengan mentor profesional.</p>
+                    </div>
+                    
+                    <div class="text-center md:text-right">
+                        <h3 class="text-lg font-bold mb-4">Kontak Kami</h3>
+                        <div class="space-y-2">
+                            <p class="flex items-center justify-center md:justify-end">
+                                <i class="fas fa-map-marker-alt text-amber-400 mr-2"></i>
+                                <span>Jl. Seni Indah No. 123, Jakarta</span>
+                            </p>
+                            <p class="flex items-center justify-center md:justify-end">
+                                <i class="fas fa-phone text-amber-400 mr-2"></i>
+                                <span>(021) 1234-5678</span>
+                            </p>
+                            <p class="flex items-center justify-center md:justify-end">
+                                <i class="fas fa-envelope text-amber-400 mr-2"></i>
+                                <span>info@kaligrafimaster.id</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                    <p>&copy; 2023 KaligrafiMaster. All rights reserved. | <a href="#" onclick="openLoginModal()" class="text-amber-400 hover:text-amber-300">Admin Panel</a></p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Admin Panel (Tersembunyi) -->
+    <div id="adminPanel" class="admin-panel">
+        <!-- Admin panel dari file karya siswa.html akan dimuat di sini -->
+    </div>
+
+    <!-- Hidden file input untuk upload -->
+    <input type="file" id="file-input" accept="image/*" multiple style="display: none;">
+
+    <script>
+        // State untuk aplikasi
+        let currentUser = null;
+        let galleryItems = JSON.parse(localStorage.getItem('kaligrafi_gallery')) || [
+            {
+                id: '1',
+                url: 'https://placehold.co/600x400/4f46e5/white?text=Kaligrafi+1',
+                nama: 'Budi Santoso',
+                idSiswa: '123456',
+                komentar: 'Lukisan kaligrafi ayat kursi',
+                likes: 5,
+                views: 12,
+                rating: 4.5,
+                date: '2023-10-15'
+            },
+            {
+                id: '2',
+                url: 'https://placehold.co/600x400/ec4899/white?text=Kaligrafi+2',
+                nama: 'Siti Aminah',
+                idSiswa: '654321',
+                komentar: 'Kaligrafi modern dengan warna pastel',
+                likes: 8,
+                views: 24,
+                rating: 4.8,
+                date: '2023-10-10'
+            }
+        ];
+        let previewImages = [];
+        
+        // Fungsi untuk login
+        function openLoginModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+        
+        function closeLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('loginForm').reset();
+        }
+        
+        // Handle login form
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Credential sederhana
+            if (username === 'admin' && password === 'admin123') {
+                currentUser = { username: 'admin' };
+                alert('Login berhasil! Mengarahkan ke admin panel...');
+                closeLoginModal();
+                openAdminPanel();
+            } else {
+                alert('Username atau password salah! Coba: admin / admin123');
+            }
+        });
+        
+        // Fungsi untuk membuka admin panel dengan form upload lengkap
+        function openAdminPanel() {
+            // Sembunyikan landing page
+            document.getElementById('landingPage').style.display = 'none';
+            
+            // Tampilkan admin panel dengan form upload lengkap
+            document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('adminPanel').innerHTML = `
+                <div class="bg-gray-100 min-h-screen p-4">
+                    <div class="max-w-4xl mx-auto">
+                        <!-- Header Admin -->
+                        <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+                            <div class="flex items-center mb-4 md:mb-0">
+                                <div class="w-12 h-12 gradient-primary rounded-xl flex items-center justify-center mr-4">
+                                    <i class="fas fa-pen-nib text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h1 class="text-2xl font-bold text-gray-800">Admin Panel - KaligrafiMaster</h1>
+                                    <p class="text-gray-600">Upload dan kelola karya siswa</p>
+                                </div>
+                            </div>
+                            <div class="flex space-x-3">
+                                <button onclick="loadGallery()" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 flex items-center">
+                                    <i class="fas fa-sync mr-2"></i> Refresh
+                                </button>
+                                <button onclick="closeAdminPanel()" class="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 flex items-center">
+                                    <i class="fas fa-arrow-left mr-2"></i> Kembali
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                            <!-- Statistik -->
+                            <div class="bg-white rounded-xl shadow-lg p-6">
+                                <h3 class="text-lg font-bold mb-4">Statistik Karya</h3>
+                                <div class="space-y-4">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-700">Total Karya</span>
+                                        <span class="font-bold text-amber-700 text-xl">${galleryItems.length}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-700">Total Viewer</span>
+                                        <span class="font-bold text-amber-700 text-xl">${galleryItems.reduce((sum, item) => sum + item.views, 0)}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-700">Total Likes</span>
+                                        <span class="font-bold text-amber-700 text-xl">${galleryItems.reduce((sum, item) => sum + item.likes, 0)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Quick Info -->
+                            <div class="bg-white rounded-xl shadow-lg p-6 lg:col-span-2">
+                                <h3 class="text-lg font-bold mb-4">Instruksi Upload</h3>
+                                <ul class="list-disc pl-5 text-gray-600 space-y-2">
+                                    <li>Pastikan ID siswa terdiri dari 6 digit angka</li>
+                                    <li>Upload gambar dengan format JPG, PNG, atau GIF</li>
+                                    <li>Maksimal 5 gambar per upload</li>
+                                    <li>Gambar pertama akan menjadi thumbnail di galeri</li>
+                                    <li>Data akan disimpan di browser lokal (localStorage)</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Form Upload -->
+                        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                            <h2 class="text-xl font-bold mb-6">Upload Karya Baru</h2>
+                            
+                            <!-- Preview Gambar -->
+                            <div id="preview-container" class="mb-6 ${previewImages.length > 0 ? '' : 'hidden'}">
+                                <div class="flex items-center mb-3">
+                                    <i class="fas fa-images text-amber-600 mr-2"></i>
+                                    <span class="font-medium text-gray-800">Gambar Terpilih (<span id="preview-count">0</span>)</span>
+                                </div>
+                                <div id="preview-grid" class="flex space-x-2 overflow-x-auto pb-2">
+                                    <!-- Preview gambar akan muncul di sini -->
+                                </div>
+                            </div>
+                            
+                            <!-- Form Input -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="block text-gray-700 mb-2">ID Siswa (6 digit)</label>
+                                    <input type="text" id="id-siswa" maxlength="6" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" placeholder="123456">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Nama Siswa</label>
+                                    <input type="text" id="nama-siswa" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" placeholder="Contoh: Budi Santoso">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block text-gray-700 mb-2">Komentar/Deskripsi</label>
+                                <textarea id="komentar" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent" placeholder="Tulis deskripsi karya..."></textarea>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block text-gray-700 mb-2">Rating Awal (1-5)</label>
+                                <div class="flex items-center">
+                                    <div class="flex" id="rating-stars">
+                                        ${[1,2,3,4,5].map(i => `
+                                            <button type="button" class="text-2xl mr-1 rating-star" data-rating="${i}" onclick="setRating(${i})">
+                                                <i class="far fa-star text-gray-300"></i>
+                                            </button>
+                                        `).join('')}
+                                    </div>
+                                    <span id="rating-value" class="ml-3 text-gray-700">Belum dinilai</span>
+                                    <input type="hidden" id="rating-input" value="0">
+                                </div>
+                            </div>
+                            
+                            <!-- Tombol Aksi -->
+                            <div class="flex flex-col sm:flex-row justify-between space-y-4 sm:space-y-0">
+                                <div class="flex space-x-3">
+                                    <button onclick="triggerFileInput()" class="bg-gray-200 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-300 flex items-center">
+                                        <i class="fas fa-upload mr-2"></i> Upload Gambar
+                                    </button>
+                                    <button onclick="clearPreview()" class="bg-red-100 text-red-700 px-6 py-3 rounded-lg hover:bg-red-200 flex items-center">
+                                        <i class="fas fa-trash-alt mr-2"></i> Hapus Preview
+                                    </button>
+                                </div>
+                                <button onclick="submitKarya()" class="gradient-primary text-white px-8 py-3 rounded-lg hover:opacity-90 flex items-center font-bold">
+                                    <i class="fas fa-paper-plane mr-2"></i> Kirim Karya
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Daftar Karya Terbaru -->
+                        <div class="bg-white rounded-xl shadow-lg p-6">
+                            <h2 class="text-xl font-bold mb-6">Karya Terbaru (${galleryItems.length} total)</h2>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead>
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Views</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Likes</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rating</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        ${galleryItems.slice(0, 5).map(item => `
+                                            <tr>
+                                                <td class="px-4 py-3 text-sm font-medium text-gray-900">${item.nama}</td>
+                                                <td class="px-4 py-3 text-sm text-gray-700">${item.idSiswa}</td>
+                                                <td class="px-4 py-3 text-sm text-gray-700">${item.views}</td>
+                                                <td class="px-4 py-3 text-sm text-gray-700">${item.likes}</td>
+                                                <td class="px-4 py-3 text-sm text-gray-700">
+                                                    <div class="flex items-center">
+                                                        <span class="text-amber-600 font-bold">${item.rating?.toFixed(1) || 'N/A'}</span>
+                                                        <i class="fas fa-star text-amber-500 ml-1"></i>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3 text-sm">
+                                                    <button onclick="deleteKarya('${item.id}')" class="text-red-600 hover:text-red-800">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Inisialisasi rating stars
+            initializeRatingStars();
+            
+            // Render preview jika ada
+            renderPreview();
+        }
+        
+        // Fungsi untuk mengatur rating
+        let currentRating = 0;
+        
+        function initializeRatingStars() {
+            const stars = document.querySelectorAll('.rating-star');
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const rating = parseInt(this.dataset.rating);
+                    setRating(rating);
+                });
+            });
+        }
+        
+        function setRating(rating) {
+            currentRating = rating;
+            document.getElementById('rating-input').value = rating;
+            document.getElementById('rating-value').textContent = `${rating}.0`;
+            
+            const stars = document.querySelectorAll('.rating-star i');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.className = 'fas fa-star text-amber-500';
+                } else {
+                    star.className = 'far fa-star text-gray-300';
+                }
+            });
+        }
+        
+        // Fungsi untuk trigger file input
+        function triggerFileInput() {
+            document.getElementById('file-input').click();
+        }
+        
+        // Handle file input change
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            const files = Array.from(e.target.files).slice(0, 5);
+            previewImages = [];
+            
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const url = URL.createObjectURL(file);
+                    previewImages.push({ file, url });
+                }
+            });
+            
+            renderPreview();
+        });
+        
+        // Fungsi untuk render preview gambar
+        function renderPreview() {
+            const previewContainer = document.getElementById('preview-container');
+            const previewGrid = document.getElementById('preview-grid');
+            const previewCount = document.getElementById('preview-count');
+            
+            if (!previewContainer || !previewGrid || !previewCount) return;
+            
+            if (previewImages.length > 0) {
+                previewContainer.classList.remove('hidden');
+                previewCount.textContent = previewImages.length;
+                
+                previewGrid.innerHTML = previewImages.map(item => `
+                    <div class="preview-item">
+                        <img src="${item.url}" alt="Preview">
+                    </div>
+                `).join('');
+            } else {
+                previewContainer.classList.add('hidden');
+                previewGrid.innerHTML = '';
+            }
+        }
+        
+        // Fungsi untuk menghapus preview
+        function clearPreview() {
+            previewImages = [];
+            renderPreview();
+            document.getElementById('file-input').value = '';
+        }
+        
+        // Fungsi untuk submit karya
+        function submitKarya() {
+            const idSiswa = document.getElementById('id-siswa').value.trim();
+            const namaSiswa = document.getElementById('nama-siswa').value.trim();
+            const komentar = document.getElementById('komentar').value.trim();
+            const rating = parseFloat(document.getElementById('rating-input').value) || 0;
+            
+            // Validasi
+            if (!/^\d{6}$/.test(idSiswa)) {
+                alert('ID Siswa harus 6 digit angka!');
+                return;
+            }
+            if (!namaSiswa) {
+                alert('Nama siswa wajib diisi!');
+                return;
+            }
+            if (!komentar) {
+                alert('Komentar/deskripsi wajib diisi!');
+                return;
+            }
+            if (previewImages.length === 0) {
+                alert('Harap upload minimal 1 gambar!');
+                return;
+            }
+            if (rating === 0) {
+                alert('Harap berikan rating untuk karya ini!');
+                return;
+            }
+            
+            // Tambah ke galleryItems
+            const newId = Date.now().toString();
+            galleryItems.unshift({
+                id: newId,
+                url: previewImages[0].url, // Gunakan gambar pertama sebagai thumbnail
+                nama: namaSiswa,
+                idSiswa: idSiswa,
+                komentar: komentar,
+                likes: 0,
+                views: 0,
+                rating: rating,
+                date: new Date().toISOString().split('T')[0]
+            });
+            
+            // Simpan ke localStorage
+            localStorage.setItem('kaligrafi_gallery', JSON.stringify(galleryItems));
+            
+            // Reset form
+            document.getElementById('id-siswa').value = '';
+            document.getElementById('nama-siswa').value = '';
+            document.getElementById('komentar').value = '';
+            setRating(0);
+            clearPreview();
+            
+            // Tampilkan pesan sukses
+            alert(`✅ Karya "${namaSiswa}" berhasil ditambahkan ke galeri!`);
+            
+            // Refresh admin panel
+            openAdminPanel();
+            
+            // Juga refresh galeri di landing page nanti
+        }
+        
+        // Fungsi untuk menghapus karya
+        function deleteKarya(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus karya ini?')) {
+                galleryItems = galleryItems.filter(item => item.id !== id);
+                localStorage.setItem('kaligrafi_gallery', JSON.stringify(galleryItems));
+                alert('Karya berhasil dihapus!');
+                openAdminPanel(); // Refresh admin panel
+            }
+        }
+        
+        // Fungsi untuk menutup admin panel
+        function closeAdminPanel() {
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('landingPage').style.display = 'block';
+            // Refresh galeri setelah kembali
+            loadGallery();
+        }
+        
+        // Fungsi untuk carousel
+        function scrollCarousel(direction) {
+            const carousel = document.getElementById('carousel');
+            const scrollAmount = 300;
+            carousel.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+        }
+        
+        // Fungsi untuk memuat galeri di landing page
+        function loadGallery() {
+            const galleryGrid = document.getElementById('galleryGrid');
+            const emptyGallery = document.getElementById('emptyGallery');
+            const totalArtworks = document.getElementById('totalArtworks');
+            
+            // Update total karya
+            totalArtworks.textContent = galleryItems.length;
+            
+            // Jika tidak ada karya
+            if (galleryItems.length === 0) {
+                galleryGrid.innerHTML = '';
+                emptyGallery.classList.remove('hidden');
+                return;
+            }
+            
+            // Sembunyikan empty state
+            emptyGallery.classList.add('hidden');
+            
+            // Render karya
+            galleryGrid.innerHTML = galleryItems.map(item => `
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden transition-transform duration-300 hover:scale-[1.02]">
+                    <div class="relative">
+                        <div class="h-48 bg-gray-200 overflow-hidden cursor-pointer" onclick="viewArtwork('${item.id}')">
+                            <img src="${item.url}" alt="${item.komentar}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="absolute top-3 right-3 bg-black bg-opacity-70 text-white text-xs font-bold px-2 py-1 rounded">
+                            <i class="fas fa-eye mr-1"></i>${item.views}
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-bold text-gray-800">${item.nama}</h3>
+                                <p class="text-sm text-gray-600">ID: ${item.idSiswa}</p>
+                            </div>
+                            <div class="flex items-center bg-amber-50 text-amber-800 text-sm font-bold px-2 py-1 rounded">
+                                <i class="fas fa-star mr-1"></i>
+                                ${item.rating?.toFixed(1) || 'N/A'}
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-700 mb-4 italic">"${item.komentar}"</p>
+                        
+                        <div class="flex justify-between items-center">
+                            <button onclick="likeArtwork('${item.id}')" class="flex items-center text-amber-700 hover:text-amber-800">
+                                <i class="fas fa-heart mr-1"></i>
+                                <span id="likes-${item.id}">${item.likes}</span>
+                            </button>
+                            
+                            <button onclick="shareArtwork('${item.id}')" class="flex items-center text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-share-alt mr-1"></i>
+                                <span>Bagikan</span>
+                            </button>
+                            
+                            <button onclick="viewArtwork('${item.id}')" class="flex items-center text-gray-600 hover:text-gray-800">
+                                <i class="fas fa-expand mr-1"></i>
+                                <span>Lihat</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Simpan ke localStorage
+            localStorage.setItem('kaligrafi_gallery', JSON.stringify(galleryItems));
+        }
+        
+        // Fungsi untuk like karya
+        function likeArtwork(id) {
+            const item = galleryItems.find(i => i.id === id);
+            if (item) {
+                item.likes++;
+                document.getElementById(`likes-${id}`).textContent = item.likes;
+                localStorage.setItem('kaligrafi_gallery', JSON.stringify(galleryItems));
+            }
+        }
+        
+        // Fungsi untuk share karya
+        function shareArtwork(id) {
+            const item = galleryItems.find(i => i.id === id);
+            if (item) {
+                // Simulasi share dengan menampilkan alert
+                alert(`Berbagi karya ${item.nama}: "${item.komentar}"\n\nURL: https://kaligrafimaster.id/karya/${id}`);
+                
+                // Dalam implementasi nyata, bisa menggunakan Web Share API
+                if (navigator.share) {
+                    navigator.share({
+                        title: `Karya Kaligrafi oleh ${item.nama}`,
+                        text: item.komentar,
+                        url: `https://kaligrafimaster.id/karya/${id}`,
+                    });
+                }
+            }
+        }
+        
+        // Fungsi untuk view karya
+        function viewArtwork(id) {
+            const item = galleryItems.find(i => i.id === id);
+            if (item) {
+                item.views++;
+                localStorage.setItem('kaligrafi_gallery', JSON.stringify(galleryItems));
+                loadGallery(); // Refresh untuk update views
+                
+                // Tampilkan modal dengan gambar besar
+                const modalHTML = `
+                    <div class="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4">
+                        <div class="bg-white rounded-2xl max-w-2xl w-full overflow-hidden">
+                            <div class="relative">
+                                <img src="${item.url}" alt="${item.komentar}" class="w-full h-auto max-h-96 object-contain bg-gray-100">
+                                <button onclick="closeModal()" class="absolute top-4 right-4 w-10 h-10 bg-black bg-opacity-50 text-white rounded-full flex items-center justify-center">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">${item.nama} (ID: ${item.idSiswa})</h3>
+                                <p class="text-gray-700 mb-4">"${item.komentar}"</p>
+                                <div class="flex justify-between text-sm text-gray-600">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-eye mr-2"></i>
+                                        <span>${item.views} viewer</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-heart mr-2"></i>
+                                        <span>${item.likes} likes</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-star mr-2"></i>
+                                        <span>Rating: ${item.rating?.toFixed(1) || 'N/A'}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-calendar mr-2"></i>
+                                        <span>${item.date}</span>
+                                    </div>
+                                </div>
+                                <div class="mt-6 flex justify-center">
+                                    <button onclick="shareArtwork('${item.id}')" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 flex items-center">
+                                        <i class="fas fa-share-alt mr-2"></i> Bagikan Karya Ini
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                const modalDiv = document.createElement('div');
+                modalDiv.innerHTML = modalHTML;
+                document.body.appendChild(modalDiv);
+                
+                // Fungsi untuk menutup modal
+                window.closeModal = function() {
+                    document.body.removeChild(modalDiv);
+                };
+            }
+        }
+        
+        // Fungsi untuk filter galeri
+        function filterGallery(type) {
+            // Update tombol aktif
+            document.getElementById('filterAll').classList.remove('bg-amber-600', 'text-white');
+            document.getElementById('filterPopular').classList.remove('bg-amber-600', 'text-white');
+            document.getElementById('filterRecent').classList.remove('bg-amber-600', 'text-white');
+            
+            document.getElementById('filterAll').classList.add('bg-gray-200', 'text-gray-700');
+            document.getElementById('filterPopular').classList.add('bg-gray-200', 'text-gray-700');
+            document.getElementById('filterRecent').classList.add('bg-gray-200', 'text-gray-700');
+            
+            if (type === 'all') {
+                document.getElementById('filterAll').classList.remove('bg-gray-200', 'text-gray-700');
+                document.getElementById('filterAll').classList.add('bg-amber-600', 'text-white');
+                // Tidak perlu filter, tampilkan semua
+                loadGallery();
+            } else if (type === 'popular') {
+                document.getElementById('filterPopular').classList.remove('bg-gray-200', 'text-gray-700');
+                document.getElementById('filterPopular').classList.add('bg-amber-600', 'text-white');
+                
+                // Urutkan berdasarkan likes (popularitas)
+                const sortedItems = [...galleryItems].sort((a, b) => b.likes - a.likes);
+                renderFilteredGallery(sortedItems);
+            } else if (type === 'recent') {
+                document.getElementById('filterRecent').classList.remove('bg-gray-200', 'text-gray-700');
+                document.getElementById('filterRecent').classList.add('bg-amber-600', 'text-white');
+                
+                // Urutkan berdasarkan tanggal (terbaru)
+                const sortedItems = [...galleryItems].sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+                renderFilteredGallery(sortedItems);
+            }
+        }
+        
+        // Fungsi untuk merender galeri yang sudah difilter
+        function renderFilteredGallery(items) {
+            const galleryGrid = document.getElementById('galleryGrid');
+            
+            if (items.length === 0) {
+                galleryGrid.innerHTML = `
+                    <div class="col-span-3 text-center py-12">
+                        <div class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-search text-gray-400 text-4xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-700 mb-2">Tidak Ditemukan</h3>
+                        <p class="text-gray-600">Tidak ada karya yang sesuai dengan filter ini.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            galleryGrid.innerHTML = items.map(item => `
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="relative">
+                        <div class="h-48 bg-gray-200 overflow-hidden">
+                            <img src="${item.url}" alt="${item.komentar}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="absolute top-3 right-3 bg-black bg-opacity-70 text-white text-xs font-bold px-2 py-1 rounded">
+                            <i class="fas fa-eye mr-1"></i>${item.views}
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-bold text-gray-800">${item.nama}</h3>
+                                <p class="text-sm text-gray-600">ID: ${item.idSiswa}</p>
+                            </div>
+                            <div class="flex items-center bg-amber-50 text-amber-800 text-sm font-bold px-2 py-1 rounded">
+                                <i class="fas fa-star mr-1"></i>
+                                ${item.rating?.toFixed(1) || 'N/A'}
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-700 mb-4 italic">"${item.komentar}"</p>
+                        
+                        <div class="flex justify-between items-center">
+                            <button onclick="likeArtwork('${item.id}')" class="flex items-center text-amber-700 hover:text-amber-800">
+                                <i class="fas fa-heart mr-1"></i>
+                                <span id="likes-${item.id}">${item.likes}</span>
+                            </button>
+                            
+                            <button onclick="shareArtwork('${item.id}')" class="flex items-center text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-share-alt mr-1"></i>
+                                <span>Bagikan</span>
+                            </button>
+                            
+                            <button onclick="viewArtwork('${item.id}')" class="flex items-center text-gray-600 hover:text-gray-800">
+                                <i class="fas fa-expand mr-1"></i>
+                                <span>Lihat</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Inisialisasi saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGallery();
+            
+            // Tambahkan event listener untuk smooth scroll
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId !== '#') {
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            window.scrollTo({
+                                top: targetElement.offsetTop - 80,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
