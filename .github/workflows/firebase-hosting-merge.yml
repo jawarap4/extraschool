@@ -17,3 +17,4 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_EXSCHOOL_6EA50 }}
           channelId: live
           projectId: exschool-6ea50
+# trigger update
