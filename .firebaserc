@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "harfart-ff23a"
-  }
+    "default": "exschool-6ea50"
+  },
+  "targets": {},
+  "etags": {}
 }
